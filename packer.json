@@ -1,0 +1,46 @@
+{
+    "_comment" : "Create a AWS AMI ith UBUNTU Linux 2020 with Java and Tomcat",
+    "variables": {
+      "aws_access_key": "",
+      "aws_secret_key": "",
+      "region": "",
+      "source_ami":"ami-04b4f1a9cf54c11d0",
+      "instance_type":"t2.micro",
+      "vpc_id": "",
+      "subnet_id": ""
+    },
+    "_comment1" : "packer build -var \"aws_secret_key=foo\" template.json",
+    "_comment2" : "packer build -var-file packer-vars.json template.json",
+    "builders": [{
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "type": "amazon-ebs",
+      "region": "{{user `region`}}",
+      "source_ami": "{{user `source_ami`}}",
+      "instance_type": "{{user `instance_type`}}",
+      "ssh_username": "ubuntu",
+      "ami_name": "Apurv-AMI-Build-{{isotime | clean_resource_name}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "tags": {
+        "Name": "Apurv-AMI-Build-{{isotime | clean_resource_name}}"
+      }
+    }],
+    "provisioners": [{
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo apt update",
+        "sudo apt install software-properties-common -y",
+        "sudo apt-add-repository --yes --update ppa:ansible/ansible",
+        "sudo apt update",
+        "sudo apt install ansible -y",
+        "sudo apt install nginx -y",
+        "sudo apt install python3-apt -y",
+        "sudo apt install stress -y",
+        "sudo apt install git -y  ",
+        "sudo git clone https://github.com/ApurvDevops/autoscaling.git /myrepo"
+        ]
+    }
+   ]
+  }
